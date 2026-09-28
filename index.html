@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17111C">
+<title>Hotel Amor y Pasión · Recepción que responde en segundos</title>
+<meta name="description" content="Prototipo de recepción virtual con IA de voz. Consulta habitaciones, tarifas y reserva hablando o escribiendo, con respuesta inmediata las 24 horas.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="./">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hotel Amor y Pasión · Recepción que responde en segundos">
+<meta property="og:description" content="Prototipo de recepción virtual con IA de voz. Habla o escribe y recibe respuesta inmediata.">
+<meta property="og:locale" content="es_CL">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2317111C'/%3E%3Cpath d='M16 25c-6-4.2-9-7.6-9-11.4A5.1 5.1 0 0 1 16 10a5.1 5.1 0 0 1 9 3.6C25 17.4 22 20.8 16 25z' fill='%23C9975C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   HOTEL AMOR Y PASIÓN — PROTOTIPO DE RECEPCIÓN VIRTUAL CON IA DE VOZ
+   Archivo único. Sin dependencias externas salvo Google Fonts.
+   ============================================================ */
+
+:root{
+  --ink:#17111C;         /* ciruela medianoche */
+  --ink-2:#1F1826;       /* superficie elevada */
+  --ink-3:#2A2131;       /* superficie 2 */
+  --wine:#8E2740;        /* vino profundo */
+  --wine-lo:#6B1B2F;
+  --brass:#C9975C;       /* latón cálido */
+  --brass-lo:#8E6A3C;
+  --blush:#E8C7C8;       /* rubor */
+  --cream:#F2EBE4;
+  --muted:#A79CA6;
+  --line:rgba(233,199,200,.14);
+  --ok:#6FBF8B;
+  --maxw:1180px;
+  --r:4px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ink);color:var(--cream);
+  font:400 16px/1.65 'Inter',system-ui,-apple-system,sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Fraunces',Georgia,serif}
+.eyebrow{
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--brass);font-weight:600;
+}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- cinta de demo ---------- */
+.ribbon{
+  background:linear-gradient(90deg,var(--wine-lo),var(--wine));
+  text-align:center;padding:7px 14px;font-size:11.5px;letter-spacing:.06em;
+  color:#FBEFE9;position:relative;z-index:60;
+}
+.ribbon b{color:#fff;font-weight:600}
+
+/* ---------- nav ---------- */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(23,17,28,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand-mark{width:30px;height:30px;flex:0 0 auto}
+.brand-txt{font-family:'Fraunces',serif;font-size:19px;letter-spacing:.02em;line-height:1}
+.brand-sub{font-size:8.5px;letter-spacing:.28em;color:var(--brass);text-transform:uppercase;margin-top:3px}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{text-decoration:none;font-size:13.5px;color:var(--cream);opacity:.82;position:relative;padding:4px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--brass);transition:width .25s}
+.nav-links a:hover{opacity:1}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  border:1px solid var(--brass);background:transparent;color:var(--brass);
+  padding:9px 17px;border-radius:var(--r);font-size:12.5px;letter-spacing:.09em;
+  text-transform:uppercase;cursor:pointer;transition:.2s;white-space:nowrap;
+}
+.nav-cta:hover{background:var(--brass);color:var(--ink)}
+.burger{display:none;background:none;border:1px solid var(--line);border-radius:var(--r);width:42px;height:38px;cursor:pointer;align-items:center;justify-content:center}
+.burger span{display:block;width:17px;height:1.5px;background:var(--cream);position:relative}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:17px;height:1.5px;background:var(--cream);transition:.25s}
+.burger span::before{top:-5px}.burger span::after{top:5px}
+.burger[aria-expanded="true"] span{background:transparent}
+.burger[aria-expanded="true"] span::before{top:0;transform:rotate(45deg)}
+.burger[aria-expanded="true"] span::after{top:0;transform:rotate(-45deg)}
+.drawer{display:none;border-top:1px solid var(--line);background:var(--ink-2)}
+.drawer.open{display:block}
+.drawer a{display:block;padding:14px 22px;text-decoration:none;font-size:14.5px;border-bottom:1px solid rgba(233,199,200,.07)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:54px 0 64px;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(900px 420px at 12% 8%,rgba(142,39,64,.34),transparent 62%),
+    radial-gradient(700px 520px at 88% 96%,rgba(201,151,92,.14),transparent 66%);
+  pointer-events:none;
+}
+.hero-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:start}
+h1.hero-h{
+  font-family:'Fraunces',serif;font-weight:400;
+  font-size:clamp(35px,5.1vw,62px);line-height:1.03;letter-spacing:-.018em;
+  margin:16px 0 20px;
+}
+h1.hero-h em{font-style:italic;color:var(--blush)}
+/* ---------- CTA del hero: titilante, presente en PC, tablet y móvil ---------- */
+.hero-cta-wrap{display:flex;justify-content:center;margin:6px 0 26px}
+.hero-cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--brass);color:var(--ink);border:0;
+  padding:15px 30px;border-radius:5px;cursor:pointer;
+  font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:600;
+  animation:beat 1.7s ease-in-out infinite;transition:background .2s;
+}
+.hero-cta:hover{background:var(--blush)}
+@keyframes beat{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,151,92,.6);transform:scale(1)}
+  50%    {box-shadow:0 0 0 15px rgba(201,151,92,0);transform:scale(1.028)}
+}
+@media(prefers-reduced-motion:reduce){.hero-cta{animation:none}}
+
+.hero-p{color:var(--muted);font-size:16.5px;max-width:44ch;font-weight:300}
+
+/* comparador de latencia — elemento firma */
+.gauge{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}
+.gauge-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:16px}
+.gauge-bar{flex:1;height:8px;background:var(--ink-3);border-radius:99px;overflow:hidden;position:relative}
+.gauge-fill{height:100%;border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.gauge-fill.slow{background:linear-gradient(90deg,var(--wine-lo),var(--wine));width:0}
+.gauge-fill.fast{background:linear-gradient(90deg,var(--brass-lo),var(--brass));width:0}
+.gauge-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);min-width:112px}
+.gauge-val{font-family:'JetBrains Mono',monospace;font-size:19px;min-width:82px;text-align:right;font-variant-numeric:tabular-nums}
+.gauge-val.slow{color:#D08A9B}
+.gauge-val.fast{color:var(--brass)}
+.gauge-foot{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:4px}
+
+/* ---------- panel del agente ---------- */
+.agent{
+  background:linear-gradient(180deg,var(--ink-2),#1A1420);
+  border:1px solid var(--line);border-radius:6px;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  display:flex;flex-direction:column;overflow:hidden;
+  /* el panel jamás debe exceder la ventana del navegador */
+  min-height:440px;
+  max-height:calc(100vh - 132px);
+  max-height:calc(100dvh - 132px);
+}
+.agent-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:13px;align-items:center}
+.orb{width:44px;height:44px;flex:0 0 auto;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,var(--blush),var(--wine) 58%,var(--wine-lo));
+  position:relative;box-shadow:0 0 0 1px rgba(201,151,92,.4)}
+.orb::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(201,151,92,.35);opacity:0}
+.orb.on::after{animation:ping 1.5s ease-out infinite}
+@keyframes ping{0%{opacity:.9;transform:scale(.9)}100%{opacity:0;transform:scale(1.35)}}
+.agent-name{font-family:'Fraunces',serif;font-size:18px;line-height:1.2}
+.agent-state{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+.head-btns{margin-left:auto;display:flex;gap:6px}
+.icobtn{width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.2s}
+.icobtn:hover{color:var(--brass);border-color:var(--brass)}
+.icobtn[aria-pressed="true"]{color:var(--brass);border-color:var(--brass)}
+
+/* chip de estrategia */
+.strategy{padding:8px 18px;border-bottom:1px solid var(--line);background:rgba(201,151,92,.05);display:flex;align-items:center;gap:9px;min-height:38px}
+.chip{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);
+  border:1px solid rgba(201,151,92,.4);padding:3px 9px;border-radius:99px;white-space:nowrap}
+.strategy small{font-size:10.5px;color:var(--muted);line-height:1.3}
+
+/* min-height:0 es lo que permite que el área de mensajes scrollee dentro del flex
+   y que los diálogos antiguos suban a medida que llegan nuevos */
+.stream{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.msg{max-width:86%;padding:11px 14px;border-radius:12px;font-size:14.2px;line-height:1.6;position:relative;animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg.bot{align-self:flex-start;background:rgba(142,39,64,.2);border:1px solid rgba(201,151,92,.16);border-bottom-left-radius:3px}
+.msg.me{align-self:flex-end;background:rgba(242,235,228,.08);border:1px solid rgba(233,199,200,.1);border-bottom-right-radius:3px}
+.msg.sys{align-self:center;background:transparent;border:1px dashed rgba(201,151,92,.32);color:var(--brass);font-size:11.5px;text-align:center;max-width:94%;border-radius:var(--r)}
+.stamp{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+.msg.bot .stamp b{color:var(--brass);font-weight:600}
+.perm{align-self:stretch;max-width:none;background:linear-gradient(135deg,rgba(201,151,92,.13),rgba(142,39,64,.16));
+  border:1px solid rgba(201,151,92,.42);border-radius:12px;padding:15px 16px;animation:rise .32s ease}
+.perm-t{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.perm-t svg{color:var(--brass);flex:0 0 auto;margin-top:1px}
+.perm-t p{margin:0;font-size:13.4px;line-height:1.6;color:var(--cream)}
+.perm-go{width:100%;background:var(--brass);color:var(--ink);border:0;padding:12px;border-radius:6px;
+  font-size:12.2px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer;
+  animation:glow 1.6s ease-in-out infinite}
+.perm-go:hover{background:var(--blush)}
+.perm-go[disabled]{opacity:.6;cursor:default;animation:none}
+.perm small{display:block;font-size:10.5px;color:var(--muted);text-align:center;margin-top:9px;line-height:1.5}
+.mic.off{background:transparent;border-color:var(--line);color:var(--muted)}
+.mic.off:hover{border-color:var(--brass);color:var(--brass);background:transparent}
+
+.typing{display:flex;gap:4px;padding:14px 16px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--brass);opacity:.5;animation:bob 1s infinite}
+.typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}
+@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+/* respuestas rápidas */
+.quick{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 12px}
+.quick button{
+  background:transparent;border:1px solid rgba(201,151,92,.32);color:var(--blush);
+  padding:7px 12px;border-radius:99px;font-size:12.2px;cursor:pointer;transition:.2s;
+}
+.quick button:hover{background:rgba(201,151,92,.14);border-color:var(--brass)}
+
+.composer{border-top:1px solid var(--line);padding:13px 16px 15px;background:rgba(12,9,15,.5)}
+.crow{display:flex;gap:9px;align-items:center}
+.mic{
+  width:50px;height:50px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(201,151,92,.5);
+  background:var(--wine);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.mic:hover{background:var(--wine-lo)}
+.mic.live{background:var(--brass);color:var(--ink);animation:ping2 1.3s infinite}
+.mic[disabled]{opacity:.3;cursor:not-allowed}
+@keyframes ping2{0%,100%{box-shadow:0 0 0 0 rgba(201,151,92,.55)}50%{box-shadow:0 0 0 12px rgba(201,151,92,0)}}
+.field{flex:1;min-width:0;background:rgba(242,235,228,.06);border:1px solid var(--line);
+  border-radius:99px;padding:13px 17px;font-size:14px;outline:none}
+.field::placeholder{color:var(--muted)}
+.field:focus{border-color:rgba(201,151,92,.55)}
+.send{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(201,151,92,.4);
+  background:transparent;color:var(--brass);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.send:hover{background:var(--brass);color:var(--ink)}
+.hint{font-size:10.8px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+
+/* ---------- secciones ---------- */
+section{padding:76px 0;position:relative;scroll-margin-top:78px}
+.sec-head{max-width:640px;margin-bottom:44px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(27px,3.6vw,42px);line-height:1.14;margin:12px 0 14px;letter-spacing:-.012em}
+.sec-head p{color:var(--muted);font-size:15.5px;font-weight:300;margin:0}
+.alt{background:var(--ink-2)}
+
+/* habitaciones */
+.rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.room{background:var(--ink);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;transition:.32s}
+.alt .room{background:var(--ink-3)}
+.room:hover{transform:translateY(-5px);border-color:rgba(201,151,92,.42);box-shadow:0 22px 50px rgba(0,0,0,.42)}
+.room-art{height:168px;position:relative;overflow:hidden}
+.room-tag{position:absolute;top:11px;left:11px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  background:rgba(23,17,28,.82);border:1px solid rgba(201,151,92,.36);color:var(--brass);padding:4px 9px;border-radius:99px}
+.room-b{padding:19px;display:flex;flex-direction:column;flex:1}
+.room-b h3{font-family:'Fraunces',serif;font-weight:400;font-size:21px;margin:0 0 8px}
+.room-b p{font-size:13.6px;color:var(--muted);font-weight:300;margin:0 0 15px;line-height:1.6;flex:1}
+.rates{border-top:1px solid var(--line);padding-top:13px;margin-bottom:15px}
+.rate{display:flex;justify-content:space-between;align-items:baseline;font-size:13.4px;padding:4px 0}
+.rate span{color:var(--muted)}
+.rate b{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cream);font-size:14px}
+.rate.closed b{color:var(--brass)}
+.ask{font-size:12.6px;color:var(--brass);border-top:1px solid var(--line);padding-top:13px;margin-bottom:15px;line-height:1.5}
+.room-cta{width:100%;background:transparent;border:1px solid var(--brass);color:var(--brass);
+  padding:11px;border-radius:var(--r);font-size:12px;letter-spacing:.11em;text-transform:uppercase;cursor:pointer;transition:.2s}
+.room-cta:hover{background:var(--brass);color:var(--ink)}
+
+/* servicios */
+.svcs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.svc{background:var(--ink);padding:26px 20px}
+.alt .svc{background:var(--ink-2)}
+.svc svg{color:var(--brass);margin-bottom:13px}
+.svc h4{font-size:14.5px;font-weight:500;margin:0 0 7px}
+.svc p{font-size:12.8px;color:var(--muted);margin:0;font-weight:300;line-height:1.6}
+
+/* discreción */
+.priv{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+.privlist{list-style:none;padding:0;margin:0}
+.privlist li{padding:15px 0 15px 30px;border-bottom:1px solid var(--line);position:relative;font-size:14.6px;font-weight:300}
+.privlist li::before{content:"";position:absolute;left:2px;top:22px;width:11px;height:1px;background:var(--brass)}
+.privlist li b{font-weight:500;color:var(--cream)}
+
+/* ubicación */
+.loc{display:grid;grid-template-columns:1fr 1.25fr;gap:40px;align-items:start}
+.locitem{border-bottom:1px solid var(--line);padding:16px 0}
+.locitem .k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);margin-bottom:5px}
+.locitem .v{font-size:15.5px;font-weight:300}
+.mapbox{border:1px solid var(--line);border-radius:6px;overflow:hidden;height:330px;background:var(--ink-3)}
+.mapbox iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(.35) contrast(1.06)}
+
+/* cierre */
+.closer{text-align:center;max-width:660px;margin:0 auto}
+.closer h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(28px,4vw,46px);line-height:1.12;margin:16px 0 18px}
+.closer p{color:var(--muted);font-size:16px;font-weight:300;margin-bottom:30px}
+.bigcta{background:var(--brass);color:var(--ink);border:0;padding:16px 38px;border-radius:var(--r);
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;cursor:pointer;transition:.2s}
+.bigcta:hover{background:var(--blush)}
+
+footer{border-top:1px solid var(--line);padding:40px 0 34px;background:#100C14}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot p{font-size:12.4px;color:var(--muted);margin:0;line-height:1.7;max-width:52ch;font-weight:300}
+.foot .age{border:1px solid rgba(201,151,92,.34);color:var(--brass);border-radius:99px;padding:5px 13px;font-size:11px;letter-spacing:.1em;white-space:nowrap}
+
+/* ---------- webpay simulado ---------- */
+.veil{position:fixed;inset:0;background:rgba(6,4,8,.86);backdrop-filter:blur(5px);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:15px;overflow:hidden;
+  -webkit-overflow-scrolling:touch}
+.veil.open{display:flex}
+.pay{width:100%;max-width:432px;background:#fff;color:#1e2430;border-radius:8px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);animation:rise .3s ease;font-size:14px;margin:auto}
+.pay-demo{background:#FFF4D6;color:#7A5A00;text-align:center;padding:7px;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:600;border-bottom:1px solid #F0E2B4}
+.pay-top{background:#0A2E5C;color:#fff;padding:17px 20px;display:flex;justify-content:space-between;align-items:center}
+.pay-logo{font-weight:600;letter-spacing:.06em;font-size:16px}
+.pay-logo small{display:block;font-size:9px;letter-spacing:.2em;opacity:.72;font-weight:400;margin-top:2px}
+.pay-body{padding:20px}
+.pay-sum{background:#F4F6F9;border:1px solid #E2E7EE;border-radius:6px;padding:14px;margin-bottom:18px}
+.pay-line{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#55606F}
+.pay-line.tot{border-top:1px solid #DDE3EB;margin-top:8px;padding-top:10px;font-size:17px;color:#0A2E5C;font-weight:600}
+.pay-line.tot span:last-child{font-family:'JetBrains Mono',monospace}
+.pay-body label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6C7787;margin:13px 0 5px;font-weight:500}
+.pay-body input,.pay-body select{width:100%;padding:11px 13px;border:1px solid #CFD7E1;border-radius:5px;background:#fff;color:#1e2430;font-size:14.5px;outline:none}
+.pay-body input:focus,.pay-body select:focus{border-color:#0A2E5C}
+.pay-2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.pay-btn{width:100%;margin-top:20px;background:#C8102E;color:#fff;border:0;padding:14px;border-radius:5px;
+  font-size:13px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.pay-btn:hover{background:#A50D26}
+.pay-cancel{width:100%;margin-top:9px;background:transparent;border:0;color:#6C7787;font-size:12.5px;cursor:pointer;padding:8px;text-decoration:underline}
+.pay-note{font-size:10.8px;color:#8A94A3;text-align:center;margin-top:14px;line-height:1.55}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* voucher */
+.voucher{width:100%;max-width:432px;background:var(--ink-2);border:1px solid rgba(201,151,92,.36);
+  border-radius:8px;padding:32px 26px;text-align:center;animation:rise .35s ease;margin:auto}
+.tick{width:56px;height:56px;margin:0 auto 18px;border-radius:50%;background:rgba(111,191,139,.14);
+  border:1px solid rgba(111,191,139,.5);display:flex;align-items:center;justify-content:center;color:var(--ok)}
+.voucher h3{font-family:'Fraunces',serif;font-weight:400;font-size:25px;margin:0 0 9px}
+.voucher>p{color:var(--muted);font-size:13.6px;margin:0 0 22px;font-weight:300;line-height:1.6}
+.code{background:var(--ink);border:1px dashed rgba(201,151,92,.45);border-radius:6px;padding:16px;margin-bottom:18px}
+.code .k{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);margin-bottom:7px}
+.code .v{font-family:'JetBrains Mono',monospace;font-size:27px;letter-spacing:.14em;color:var(--cream)}
+.vrows{text-align:left;border-top:1px solid var(--line);padding-top:15px;margin-bottom:20px}
+.vrow{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13.2px}
+.vrow span{color:var(--muted)}
+.vrow b{font-weight:500;text-align:right}
+.timer{background:rgba(142,39,64,.2);border:1px solid rgba(201,151,92,.26);border-radius:6px;padding:12px;margin-bottom:20px}
+.timer .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:4px}
+.timer .v{font-family:'JetBrains Mono',monospace;font-size:23px;color:var(--cream)}
+
+
+/* ---------- Modales: nunca exceden el área visible ----------
+   Cabecera fija arriba, cuerpo desplazable al medio y pie fijo abajo,
+   para que el botón de acción SIEMPRE se vea sin tener que scrollear. */
+.pay,.appr,.mail{display:flex;flex-direction:column;
+  max-height:calc(100vh - 30px);max-height:calc(100dvh - 30px)}
+.pay-body,.appr-b,.mail-b{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mfoot{flex:0 0 auto;padding:14px 16px 16px;border-top:1px solid rgba(0,0,0,.09);background:#fff}
+.mfoot .guide{margin-top:10px}
+.mfoot .guide small{color:#7B8494}
+.appr-hero,.pay-top,.mail-app,.mail-hd,.mail-subj,.pay-demo{flex:0 0 auto}
+
+/* ---------- guía visual: flecha + botón titilante ---------- */
+.guide{display:flex;flex-direction:column;align-items:center;margin-top:16px}
+.arrow{color:var(--brass);animation:bounce 1.15s ease-in-out infinite;margin-bottom:2px}
+@keyframes bounce{0%,100%{transform:translateY(-4px);opacity:.55}50%{transform:translateY(3px);opacity:1}}
+.arrow.dark{color:#C8102E}
+.pulse{position:relative;animation:glow 1.5s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(201,151,92,.55)}50%{box-shadow:0 0 0 13px rgba(201,151,92,0)}}
+.pulse.dark{animation:glowd 1.5s ease-in-out infinite}
+@keyframes glowd{0%,100%{box-shadow:0 0 0 0 rgba(200,16,46,.5)}50%{box-shadow:0 0 0 13px rgba(200,16,46,0)}}
+.guide small{font-size:11px;color:var(--muted);margin-top:9px;text-align:center}
+
+/* ---------- comprobante de pago aprobado ---------- */
+.appr{width:100%;max-width:432px;background:#fff;color:#1e2430;border-radius:8px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);animation:rise .3s ease;margin:auto}
+.appr-hero{background:#0A2E5C;color:#fff;padding:26px 20px;text-align:center}
+.appr-tick{width:52px;height:52px;margin:0 auto 13px;border-radius:50%;background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center}
+.appr-hero h3{margin:0 0 4px;font-size:19px;font-weight:600;letter-spacing:.02em}
+.appr-hero p{margin:0;font-size:12.5px;opacity:.78}
+.appr-amt{font-family:'JetBrains Mono',monospace;font-size:clamp(23px,6.2vw,29px);margin-top:12px;font-weight:600;white-space:nowrap}
+.appr-b{padding:20px}
+.appr-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;font-size:13px;border-bottom:1px solid #EDF1F6}
+.appr-row:last-of-type{border:0}
+.appr-row span{color:#6C7787}
+.appr-row b{font-weight:600;text-align:right}
+.appr-row b.m{font-family:'JetBrains Mono',monospace;font-weight:500}
+.appr-go{width:100%;margin-top:6px;background:#C8102E;color:#fff;border:0;padding:15px;border-radius:5px;
+  font-size:13px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.appr-go:hover{background:#A50D26}
+
+/* ---------- correo simulado de confirmación ---------- */
+.mail{width:100%;max-width:456px;background:#fff;color:#1e2430;border-radius:8px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);animation:rise .35s ease;margin:auto}
+.mail-app{background:#F1F3F7;border-bottom:1px solid #DDE2EA;padding:9px 16px;display:flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#6C7787;font-weight:600}
+.mail-app .live{width:7px;height:7px;border-radius:50%;background:#2FA36B;flex:0 0 auto;animation:blip 1.6s infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.3}}
+.mail-hd{padding:16px;border-bottom:1px solid #EDF1F6;display:flex;gap:12px;align-items:flex-start}
+.mail-av{width:40px;height:40px;flex:0 0 auto;border-radius:50%;background:#8E2740;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:15px}
+.mail-from{font-size:13.5px;font-weight:600}
+.mail-meta{font-size:11.5px;color:#7B8494;margin-top:2px;word-break:break-word}
+.mail-subj{font-size:13.5px;font-weight:600;margin:12px 16px 0;line-height:1.45}
+.mail-b{padding:14px 16px 18px}
+.mail-b p{font-size:13.4px;line-height:1.65;color:#3C4552;margin:0 0 13px}
+.mail-code{background:#FBF7EF;border:2px dashed #C9975C;border-radius:7px;padding:15px 10px;text-align:center;margin:14px 0}
+.mail-code .k{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:#8E6A3C;margin-bottom:7px;font-weight:600}
+.mail-code .v{font-family:'JetBrains Mono',monospace;font-size:clamp(19px,6.1vw,30px);
+  letter-spacing:.1em;color:#0A2E5C;font-weight:600;white-space:nowrap}
+.mail-rows{border-top:1px solid #EDF1F6;padding-top:12px}
+.mail-row{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:12.8px}
+.mail-row span{color:#7B8494}
+.mail-row b{font-weight:600;text-align:right}
+.mail-clock{background:#FDF1F3;border:1px solid #F3D3D9;border-radius:6px;padding:12px;text-align:center;margin-top:14px}
+.mail-clock .k{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#8E2740;margin-bottom:3px;font-weight:600}
+.mail-clock .v{font-family:'JetBrains Mono',monospace;font-size:24px;color:#0A2E5C;font-weight:600}
+.mail-go{width:100%;background:#0A2E5C;color:#fff;border:0;padding:15px;border-radius:5px;
+  font-size:13px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.mail-go:hover{background:#082445}
+.pulse.blue{animation:glowb 1.5s ease-in-out infinite}
+@keyframes glowb{0%,100%{box-shadow:0 0 0 0 rgba(10,46,92,.45)}50%{box-shadow:0 0 0 13px rgba(10,46,92,0)}}
+.mail-b p.mail-foot{font-size:10.5px;margin:13px 0 0;color:#98A1AE;text-align:center;line-height:1.55}
+
+/* ---------- responsive ---------- */
+@media(max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:38px}
+  .agent{min-height:auto}
+  .agent{max-height:calc(100dvh - 96px)}
+  .stream{min-height:240px}
+  .rooms{grid-template-columns:repeat(2,1fr)}
+  .svcs{grid-template-columns:repeat(2,1fr)}
+  .priv,.loc{grid-template-columns:1fr;gap:34px}
+}
+@media(max-width:860px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .nav-cta{display:none}
+}
+@media(max-width:620px){
+  .rib-long{display:none}
+  .wrap{padding:0 16px}
+  section{padding:56px 0}
+  .rooms,.svcs{grid-template-columns:1fr}
+  .gauge-row{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center}
+  .gauge-lbl{min-width:0}
+  .gauge-val{min-width:0;font-size:17px}
+  .gauge-bar{grid-column:1/-1}
+  .msg{max-width:92%}
+  .stream{padding:14px}
+  .foot{flex-direction:column}
+}
+/* iPhone con barra de gestos */
+@supports(padding:env(safe-area-inset-bottom)){
+  .composer{padding-bottom:calc(15px + env(safe-area-inset-bottom)*.5)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <b>PROTOTIPO DE DEMOSTRACIÓN</b><span class="rib-long"> · Recepción virtual con IA · Tarifas y disponibilidad referenciales</span> · El pago es simulado, no se cobra
+</div>
+
+<!-- ══════════════ NAV ══════════════ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 27C9 22.2 5.5 18.2 5.5 13.6A5.9 5.9 0 0 1 16 9.9a5.9 5.9 0 0 1 10.5 3.7C26.5 18.2 23 22.2 16 27z"
+              fill="none" stroke="#C9975C" stroke-width="1.3"/>
+      </svg>
+      <span>
+        <span class="brand-txt">Hotel Amor &amp; Pasión</span>
+        <span class="brand-sub">Las Condes</span>
+      </span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="#habitaciones">Habitaciones</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#discrecion">Discreción</a>
+      <a href="#ubicacion">Ubicación</a>
+    </nav>
+    <button class="nav-cta" data-open-agent>Hablar con recepción</button>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menú"><span></span></button>
+  </div>
+  <div class="drawer" id="drawer">
+    <a href="#habitaciones">Habitaciones</a>
+    <a href="#servicios">Servicios</a>
+    <a href="#discrecion">Discreción</a>
+    <a href="#ubicacion">Ubicación</a>
+    <a href="#top" data-open-agent>Hablar con recepción</a>
+  </div>
+</header>
+
+<!-- ══════════════ HERO + AGENTE ══════════════ -->
+<div id="top"></div>
+<section class="hero">
+  <div class="wrap hero-grid">
+
+    <div>
+      <div class="eyebrow">Recepción virtual · 24 horas</div>
+      <h1 class="hero-h">Su cliente pregunta<br>a las 3 AM.<br><em>Alguien responde.</em></h1>
+      <div class="hero-cta-wrap">
+        <button class="hero-cta" data-open-agent>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg>
+          Hablar con recepción
+        </button>
+      </div>
+
+      <p class="hero-p">
+        Habitaciones, tarifas, descuentos y reserva pagada, resueltos en la misma
+        conversación. Puede hablarle o escribirle. Responde de inmediato, siempre.
+      </p>
+
+      <!-- ELEMENTO FIRMA: comparador de latencia -->
+      <div class="gauge" id="gauge">
+        <div class="gauge-row">
+          <div class="gauge-lbl">Recepción actual</div>
+          <div class="gauge-bar"><div class="gauge-fill slow" id="fillSlow"></div></div>
+          <div class="gauge-val slow" id="valSlow">60 min</div>
+        </div>
+        <div class="gauge-row">
+          <div class="gauge-lbl">Esta recepción</div>
+          <div class="gauge-bar"><div class="gauge-fill fast" id="fillFast"></div></div>
+          <div class="gauge-val fast" id="valFast">—</div>
+        </div>
+        <p class="gauge-foot">
+          El segundo tiempo se mide en vivo, con cada respuesta de esta página. Los
+          60 minutos corresponden a la medición hecha sobre la atención manual actual.
+          En ese intervalo, la consulta ya fue respondida por la competencia.
+        </p>
+      </div>
+    </div>
+
+    <!-- PANEL DEL AGENTE -->
+    <div class="agent" id="agent">
+      <div class="agent-head">
+        <div class="orb" id="orb"></div>
+        <div>
+          <div class="agent-name">Ema</div>
+          <div class="agent-state"><span class="dot" id="dot"></span><span id="state">En línea · lista para atender</span></div>
+        </div>
+        <div class="head-btns">
+          <button class="icobtn" id="btnVoice" aria-pressed="true" title="Activar o silenciar la voz" aria-label="Activar o silenciar la voz">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7" id="wave1"/></svg>
+          </button>
+          <button class="icobtn" id="btnReset" title="Reiniciar la conversación" aria-label="Reiniciar la conversación">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="strategy">
+        <span class="chip" id="chip">Apertura</span>
+        <small id="chipNote">La estrategia comercial se muestra en pantalla solo en esta demostración.</small>
+      </div>
+
+      <div class="stream" id="stream" aria-live="polite" aria-atomic="false"></div>
+      <div class="quick" id="quick"></div>
+
+      <div class="composer">
+        <div class="crow">
+          <button class="mic" id="mic" aria-label="Hablar">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/>
+            </svg>
+          </button>
+          <input class="field" id="field" type="text" placeholder="Escriba su consulta…" autocomplete="off"
+                 enterkeyhint="send" aria-label="Escriba su consulta">
+          <button class="send" id="send" aria-label="Enviar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <p class="hint" id="hint">Pulse el micrófono para hablar, o escriba su consulta.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════ HABITACIONES ══════════════ -->
+<section id="habitaciones" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Seis suites</div>
+      <h2>Cada habitación,<br>una decisión distinta.</h2>
+      <p>Tres categorías con tarifa publicada y tres suites temáticas cuya tarifa se confirma
+         con un ejecutivo. Pregúntele a la recepción por cualquiera de ellas.</p>
+    </div>
+    <div class="rooms" id="rooms"></div>
+  </div>
+</section>
+
+<!-- ══════════════ SERVICIOS ══════════════ -->
+<section id="servicios">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Incluido</div>
+      <h2>Lo que no hay que pedir.</h2>
+      <p>Servicios disponibles en todas las categorías, sin costo adicional ni gestión previa.</p>
+    </div>
+    <div class="svcs">
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12.5a10 10 0 0 1 14 0M8 16a5.5 5.5 0 0 1 8 0M2 9a15 15 0 0 1 20 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+        <h4>Wi-Fi de alta velocidad</h4><p>Conexión propia en cada suite, sin registro ni clave compartida.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <h4>Smart TV satelital</h4><p>Señal satelital y aplicaciones de streaming listas para usar.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>
+        <h4>Room service 24/7</h4><p>Carta disponible a cualquier hora, con entrega discreta en la puerta.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 17h14l-1.4-5.6A3 3 0 0 0 14.7 9H9.3a3 3 0 0 0-2.9 2.4L5 17z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></svg>
+        <h4>Estacionamiento privado</h4><p>Acceso directo desde el vehículo, sin pasar por recepción.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v18M6 8v8M18 8v8"/></svg>
+        <h4>Climatización</h4><p>Aire acondicionado y calefacción con control individual.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 3h10v18H7z"/><path d="M10 9h4M10 13h4"/></svg>
+        <h4>Frigobar</h4><p>Bebidas frías y snacks disponibles en la habitación.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 20V9a6 6 0 0 1 12 0v11z"/><path d="M9 13h6"/></svg>
+        <h4>Tragos de bienvenida</h4><p>Dos cortesías a elección, o espumante en lugar de los tragos.</p>
+      </div>
+      <div class="svc">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        <h4>Desayuno en 12 horas</h4><p>Para dos personas en estadías nocturnas de doce horas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ DISCRECIÓN ══════════════ -->
+<section id="discrecion" class="alt">
+  <div class="wrap priv">
+    <div>
+      <div class="eyebrow">Discreción</div>
+      <h2 class="serif" style="font-weight:400;font-size:clamp(27px,3.6vw,42px);line-height:1.14;margin:12px 0 16px;letter-spacing:-.012em">
+        Nadie tiene que verlo entrar.
+      </h2>
+      <p style="color:var(--muted);font-size:15.5px;font-weight:300;margin:0 0 22px">
+        La privacidad no es un servicio adicional. Es la forma en que está diseñado
+        todo el recorrido, desde que estaciona hasta que se va.
+      </p>
+      <p style="color:var(--muted);font-size:13.6px;font-weight:300;margin:0">
+        La conversación con la recepción virtual no queda visible en ningún historial
+        compartido y no se solicitan datos de tarjeta por mensaje: el pago ocurre
+        siempre dentro del entorno seguro de la pasarela.
+      </p>
+    </div>
+    <ul class="privlist">
+      <li><b>Acceso vehicular directo.</b> Del estacionamiento a la suite sin pasar por recepción.</li>
+      <li><b>Sin registro de nombres a la vista.</b> La reserva se identifica por código, no por identidad.</li>
+      <li><b>Sanitización certificada.</b> Limpieza completa documentada entre cada estadía.</li>
+      <li><b>Atención por código.</b> El room service y la recepción operan sobre el número de reserva.</li>
+      <li><b>Comprobante al correo.</b> Sin llamados de confirmación ni mensajes inesperados.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════ UBICACIÓN ══════════════ -->
+<section id="ubicacion">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Cómo llegar</div>
+      <h2>Apoquindo 3600, Las Condes.</h2>
+      <p>A minutos del eje Apoquindo, con acceso vehicular directo.</p>
+    </div>
+    <div class="loc">
+      <div>
+        <div class="locitem"><div class="k">Dirección</div><div class="v">Apoquindo 3600, Las Condes, Santiago</div></div>
+        <div class="locitem"><div class="k">Atención</div><div class="v">24 horas, todos los días del año</div></div>
+        <div class="locitem"><div class="k">Reservas</div><div class="v">Por esta recepción virtual, en segundos</div></div>
+        <div class="locitem" style="border:0"><div class="k">Correo</div><div class="v">contacto@hotelamorypasion.cl</div></div>
+      </div>
+      <div class="mapbox">
+        <iframe title="Mapa de ubicación: Apoquindo 3600, Las Condes" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-70.5900%2C-33.4200%2C-70.5780%2C-33.4100&layer=mapnik&marker=-33.4150%2C-70.5840"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CIERRE ══════════════ -->
+<section class="alt">
+  <div class="wrap closer">
+    <div class="eyebrow">Reserve ahora</div>
+    <h2>Pregúntele lo que quiera.<br>Le responde antes de que cambie de pestaña.</h2>
+    <p>Tarifas, disponibilidad, descuentos y pago, en una sola conversación.</p>
+    <button class="bigcta" data-open-agent>Hablar con la recepción</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <p>
+      <strong style="color:var(--cream);font-weight:500">Hotel Amor y Pasión · Apoquindo 3600, Las Condes</strong><br>
+      Prototipo de demostración construido para evaluar una recepción virtual con IA.
+      Las tarifas, la disponibilidad y el proceso de pago son simulados y no constituyen
+      una oferta comercial. No se procesan pagos ni se almacenan datos personales.
+    </p>
+    <span class="age">Solo mayores de 18 años</span>
+  </div>
+</footer>
+
+<!-- ══════════════ WEBPAY SIMULADO ══════════════ -->
+<div class="veil" id="veil" role="dialog" aria-modal="true" aria-label="Pago simulado">
+  <div id="veilInner"></div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   1. BASE DE CONOCIMIENTO CERRADA
+   El agente responde ÚNICAMENTE desde estos datos.
+   Todo lo que no esté aquí se deriva a un ejecutivo humano.
+   ============================================================ */
+
+/* En pantalla: "$95.000 CLP". Para la voz se transforma aparte, porque
+   la síntesis en español lee el signo $ como "dólares". */
+const CLP  = n => "$" + n.toLocaleString("es-CL") + " CLP";
+const paraVoz = t => t
+  .replace(/\$\s?([\d.]+)\s*CLP/g, "$1 pesos")
+  .replace(/\$\s?([\d.]+)/g, "$1 pesos");
+
+const TIERS = [
+  {
+    id:"premium", nombre:"Suite Jacuzzi Premium", tag:"Categoría superior",
+    desc:"La más amplia. Jacuzzi hidromasaje, caño o sillón del amor, frigobar y sitiales para compartir.",
+    hue:[334,28], 
+    tarifas:{ 3:{base:95000, desc:85500}, 12:{base:145000, desc:130500} }
+  },
+  {
+    id:"tantra", nombre:"Suite Tantra", tag:"Intermedia",
+    desc:"Sillón del amor, iluminación regulable y baño privado con ducha. El equilibrio entre confort y valor.",
+    hue:[286,24],
+    tarifas:{ 3:{base:65000, desc:58500}, 12:{base:105000, desc:94500} }
+  },
+  {
+    id:"ejecutiva", nombre:"Suite Ejecutiva", tag:"Tarifa preferencial",
+    desc:"Cama de dos plazas, Smart TV, climatización y frigobar. Nuestra tarifa preferencial cerrada.",
+    hue:[214,20],
+    tarifas:{ 3:{base:35000, desc:null, cerrada:true}, 12:{base:70000, desc:63000} }
+  }
+];
+
+/* Suites sin tarifa publicada: sirven para demostrar la derivación a humano */
+const SIN_TARIFA = [
+  { nombre:"Suite Vip Sado",      desc:"Ambientación temática e implementación especial. Tarifa confirmada por un ejecutivo.", hue:[350,26] },
+  { nombre:"Suite Jacuzzi Vip",   desc:"Jacuzzi hidromasaje y caño. Tarifa confirmada por un ejecutivo.", hue:[24,30] },
+  { nombre:"Suite Jacuzzi",       desc:"Jacuzzi hidromasaje y baño privado. Tarifa confirmada por un ejecutivo.", hue:[190,22] }
+];
+
+const KB = {
+  servicios:"En todas las suites tiene Wi-Fi de alta velocidad, Smart TV con señal satelital, climatización, frigobar, room service las 24 horas y estacionamiento privado con acceso directo.",
+  cortesias:"Recibe dos tragos de bienvenida a elección y agua embotellada. Si lo prefiere, puede cambiar los tragos por una botella de espumante. En estadías nocturnas de doce horas se incluye desayuno para dos personas.",
+  ubicacion:"Estamos en Apoquindo 3600, Las Condes, con acceso vehicular directo. La atención es las 24 horas, todos los días.",
+  privacidad:"Su privacidad está resguardada: el acceso es directo desde el estacionamiento sin pasar por recepción, la reserva se identifica por código y no por su nombre, y cada suite se sanitiza completamente entre estadías.",
+  tramos:"Trabajamos dos tramos: tres horas y doce horas.",
+  pago:"Aceptamos tarjetas de débito, crédito y CuentaRUT a través de Webpay Plus de Transbank. El enlace es seguro y personal para su reserva.",
+  llegada:"Una vez confirmada la reserva, tiene cuarenta y cinco minutos de margen para llegar."
+};
+
+/* Temas que SIEMPRE se derivan a un ejecutivo humano */
+const DERIVAR = /factura|boleta|reclamo|reclam|olvid[eé]|perd[ií]|objeto|extravi|evento|matrimonio|despedida|cumplea|grupo grande|convenio|empresa|corporativ|mascota|perro|gato|estad[ií]a larga|mensual|arriendo mensual|trabajo|empleo|curr[ií]culum|proveedor|prensa|entrevista|denuncia|polic|demanda|abogad/i;
+
+/* ============================================================
+   2. ESTADO Y UTILIDADES
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+const stream=$("stream"), field=$("field"), quickBox=$("quick"),
+      chip=$("chip"), chipNote=$("chipNote"), orb=$("orb"),
+      stateEl=$("state"), dot=$("dot"), hint=$("hint"), mic=$("mic");
+
+let S = {};
+function resetState(){
+  S = { fase:"apertura", tierIdx:0, tramo:null, descuentoAplicado:false,
+        nombre:null, correo:null, derivado:false, tierElegido:null, montoFinal:null,
+        orden:null, autoriz:null, codigo:null, medio:null,
+        saludado:false, sinRespuesta:0 };
+}
+resetState();
+
+let voiceOn = true, recog = null, listening = false, busy = false, micReady = false;
+let bestVoice = null, voiceUnlocked = false;
+
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const hora = () => new Date().toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});
+
+/* ============================================================
+   3. VOZ — SÍNTESIS (funciona en iOS, Android y escritorio)
+   ============================================================ */
+
+function pickVoice(){
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  if(!vs.length) return;
+  const rank = v => {
+    const l=(v.lang||"").toLowerCase(), n=(v.name||"").toLowerCase();
+    let s=0;
+    if(l.startsWith("es-cl")) s+=100;
+    else if(l.startsWith("es-419")||l.startsWith("es-mx")||l.startsWith("es-ar")||l.startsWith("es-co")) s+=70;
+    else if(l.startsWith("es-us")) s+=50;
+    else if(l.startsWith("es")) s+=40;
+    else return -1;
+    if(/paulina|mónica|monica|helena|elena|luciana|isabela|sabina|female|mujer/.test(n)) s+=25;
+    if(/google/.test(n)) s+=12;
+    return s;
+  };
+  bestVoice = vs.map(v=>({v,s:rank(v)})).filter(o=>o.s>=0).sort((a,b)=>b.s-a.s).map(o=>o.v)[0] || null;
+}
+if(window.speechSynthesis){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+/* iOS exige que el primer speak() nazca de un gesto del usuario */
+function unlockVoice(){
+  if(voiceUnlocked || !window.speechSynthesis) return;
+  try{
+    const u=new SpeechSynthesisUtterance(" ");
+    u.volume=0; speechSynthesis.speak(u); voiceUnlocked=true;
+  }catch(e){ /* sin soporte: seguimos en texto */ }
+}
+
+function speak(text){
+  if(!voiceOn || !window.speechSynthesis) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(paraVoz(text).replace(/\s+/g," "));
+    u.lang = bestVoice ? bestVoice.lang : "es-CL";
+    if(bestVoice) u.voice = bestVoice;
+    u.rate = .99; u.pitch = 1.06;
+    u.onstart = ()=> orb.classList.add("on");
+    u.onend  = ()=> orb.classList.remove("on");
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ============================================================
+   4. RENDER DE MENSAJES + CRONÓMETRO (elemento firma)
+   ============================================================ */
+
+let tLastUser = null;
+
+/* El scroll se fija tras dos frames: al primero el navegador aún no
+   terminó de calcular la altura de la burbuja recién insertada. */
+function irAlFinal(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    stream.scrollTop = stream.scrollHeight;
+  }));
+}
+
+function bubble(html, who, ms){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  let stamp = "";
+  if(who === "bot"){
+    stamp = `<div class="stamp">Ema · ${hora()}` +
+            (ms!=null ? ` · <b>respondido en ${(ms/1000).toFixed(1).replace(".",",")} s</b>` : "") + `</div>`;
+  } else if(who === "me"){
+    stamp = `<div class="stamp">Usted · ${hora()}</div>`;
+  }
+  d.innerHTML = html + stamp;
+  stream.appendChild(d);
+  irAlFinal();
+  return d;
+}
+
+function sysNote(txt){
+  const d=document.createElement("div");
+  d.className="msg sys"; d.textContent=txt;
+  stream.appendChild(d); irAlFinal();
+}
+
+function updateGauge(ms){
+  $("fillSlow").style.width = "100%";
+  $("valSlow").textContent  = "60 min";
+  const pct = Math.max(1.2, Math.min(6, (ms/3600000)*100 + 1.2));
+  $("fillFast").style.width = pct + "%";
+  $("valFast").textContent  = (ms/1000).toFixed(1).replace(".",",") + " s";
+}
+
+function setChip(label, note){
+  chip.textContent = label;
+  if(note) chipNote.textContent = note;
+}
+function setState(txt, color){
+  stateEl.textContent = txt;
+  dot.style.background = color || "var(--ok)";
+}
+
+/* ============================================================
+   5. MOTOR CONVERSACIONAL
+   Máquina de estados determinista. Los precios NUNCA se redactan
+   en texto libre: se insertan desde TIERS.
+   ============================================================ */
+
+function say(text, opts){
+  opts = opts || {};
+  busy = true;
+  quickBox.innerHTML = "";
+  const typing = document.createElement("div");
+  typing.className = "msg bot typing";
+  typing.innerHTML = "<i></i><i></i><i></i>";
+  stream.appendChild(typing);
+  irAlFinal();
+
+  const delay = 620 + Math.min(560, text.length * 3);
+  setTimeout(()=>{
+    typing.remove();
+    const ms = tLastUser ? (Date.now() - tLastUser) : null;
+    bubble(esc(text).replace(/\n/g,"<br>"), "bot", ms);
+    if(ms != null) updateGauge(ms);
+    tLastUser = null;
+    speak(text);
+    busy = false;
+    if(opts.quick) renderQuick(opts.quick);
+    if(opts.then) setTimeout(opts.then, 260);
+  }, delay);
+}
+
+function renderQuick(items){
+  quickBox.innerHTML = "";
+  items.forEach(t=>{
+    const b = document.createElement("button");
+    b.type="button"; b.textContent = t;
+    b.addEventListener("click", ()=>{ unlockVoice(); submit(t); });
+    quickBox.appendChild(b);
+  });
+}
+
+/* ---- detección de intención ---- */
+/* Afirmación fuerte: gana siempre, aunque la frase también contenga una objeción
+   ("sí, aunque está caro, la tomo"). */
+const AFIRMA_F = /\b(la tomo|lo tomo|me la llevo|me interesa|la quiero|lo quiero|reserv|acepto|confirmo|me acomoda|me sirve|esa misma|de acuerdo|trato hecho|dale nomas|dale nomás)\b/i;
+const AFIRMA   = /\b(si|sí|s[ií]i+|claro|dale|ya|ok|okey|okay|bueno|buena|perfecto|me gusta|listo|vamos|excelente|genial|esa|esa|me parece bien|est[aá] bien)\b/i;
+const OBJETA   = /\b(car[oa]|carisim|car[ií]sim|muy alto|es alto|muy elevado|no me alcanza|no alcanzo|fuera de|presupuesto|mas barat|m[aá]s barat|barat|econom|m[aá]s bajo|otra opcion|otra opción|otra alternativa|alternativa|algo menor|algo mas econom|no puedo|no tengo tanto|se me va|mucha plata|se pasa|rebaj|descuent|no me sirve|no me convence|no gracias|no me interesa|muy caro|demasiado)\b/i;
+const PRECIOS  = /\b(precio|precios|tarifa|tarifas|valor|valores|cuanto|cuánto|cuesta|vale|cobran|habitacion|habitación|habitaciones|suite|suites|pieza|disponib|reserv|arriendo|arrendar|tienen)\b/i;
+const SALUDO   = /^(hola|buenas|buenos|buen[oa]s? (dias|días|tardes|noches)|hey|que tal|qué tal|alo|aló)\b/i;
+
+function detectTramo(q){
+  if(/\b(12|doce)\s*(h|hr|hrs|hora|horas)?\b/.test(q) || /noche|nocturn|amanecer|toda la noche/.test(q)) return 12;
+  if(/\b(3|tres)\s*(h|hr|hrs|hora|horas)?\b/.test(q) || /un rato|rato|corto|breve/.test(q)) return 3;
+  return null;
+}
+function detectTier(q){
+  if(/premium|jacuzzi premium/.test(q)) return 0;
+  if(/tantra|sillon|sillón|silla del amor/.test(q)) return 1;
+  if(/ejecutiva|estandar|estándar|basica|básica|simple|econom/.test(q)) return 2;
+  return null;
+}
+function detectSinTarifa(q){
+  if(/sado/.test(q)) return "Suite Vip Sado";
+  if(/jacuzzi vip|vip jacuzzi/.test(q)) return "Suite Jacuzzi Vip";
+  if(/\bjacuzzi\b/.test(q) && !/premium/.test(q)) return "Suite Jacuzzi";
+  return null;
+}
+
+/* ---- ofertas ---- */
+function precioActual(){
+  const t = TIERS[S.tierIdx], tr = t.tarifas[S.tramo || 3];
+  return S.descuentoAplicado && tr.desc ? tr.desc : tr.base;
+}
+
+function ofertar(){
+  const t = TIERS[S.tierIdx];
+  const tramo = S.tramo || 3;
+  const tr = t.tarifas[tramo];
+  S.fase = "oferta"; S.descuentoAplicado = false;
+
+  const etiqueta = S.tierIdx===0 ? "Anclaje de valor"
+                 : S.tierIdx===1 ? "Descenso de categoría"
+                 : "Tarifa preferencial";
+  setChip(etiqueta, S.tierIdx===0
+    ? "Se abre siempre por la categoría superior, destacando confort y exclusividad."
+    : "Al no cerrar con descuento, se presenta la categoría inmediatamente inferior.");
+
+  let txt = `Le presento la ${t.nombre}. ${t.desc}\n\n`
+          + `Por ${tramo} horas, el valor es de ${CLP(tr.base)}.\n\n`
+          + `¿Qué le parece la opción presentada?`;
+  say(txt, { quick:["Me interesa","Está fuera de mi presupuesto","¿Y por 12 horas?"] });
+}
+
+function aplicarDescuento(){
+  const t = TIERS[S.tierIdx], tramo = S.tramo || 3, tr = t.tarifas[tramo];
+
+  if(tr.cerrada){
+    setChip("Tarifa cerrada","La tarifa preferencial no admite rebaja adicional. Se sostiene con amabilidad.");
+    say(`Le entiendo perfectamente. En este caso, los ${CLP(tr.base)} de la ${t.nombre} por ${tramo} horas ya corresponden a nuestra tarifa preferencial exclusiva, así que no admite una rebaja adicional.\n\n`
+      + `Si le acomoda, puedo revisar con un ejecutivo alguna alternativa para usted. ¿Le parece?`,
+      { quick:["Sí, la tomo así","Prefiero hablar con un ejecutivo"] });
+    S.fase = "piso";
+    return;
+  }
+
+  S.descuentoAplicado = true;
+  setChip("Descuento 10%","Ante la objeción de precio se aplica de inmediato un 10% por reserva inmediata.");
+  say(`Le entiendo. Permítame hacer algo por usted: si confirma ahora mismo, puedo aplicarle un 10% de descuento por reserva inmediata.\n\n`
+    + `La ${t.nombre} por ${tramo} horas le quedaría en ${CLP(tr.desc)} en lugar de ${CLP(tr.base)}.\n\n`
+    + `¿Le acomoda así?`,
+    { quick:["Sí, la tomo","Sigue siendo alto para mí"] });
+  S.fase = "descuento";
+}
+
+function bajarCategoria(){
+  if(S.tierIdx < TIERS.length - 1){
+    S.tierIdx++;
+    S.descuentoAplicado = false;
+    const t = TIERS[S.tierIdx], tramo = S.tramo || 3, tr = t.tarifas[tramo];
+    setChip("Descenso de categoría","Se libera una categoría inferior como oportunidad recién disponible.");
+    say(`Permítame ofrecerle otra alternativa. Justo se nos liberó la ${t.nombre}. ${t.desc}\n\n`
+      + `Por ${tramo} horas queda en ${CLP(tr.base)}${tr.cerrada ? ", que es nuestra tarifa preferencial cerrada" : ""}.\n\n`
+      + `¿Qué le parece esta opción?`,
+      { quick:["Me interesa","Todavía es alto"] });
+    S.fase = "oferta";
+  } else {
+    aplicarDescuento();
+  }
+}
+
+/* ---- cierre y pago ---- */
+function iniciarCierre(){
+  S.tierElegido = TIERS[S.tierIdx];
+  S.montoFinal = precioActual();
+  S.fase = "nombre";
+  setChip("Cierre","Acordada la habitación y el tramo, se solicitan los datos para el comprobante.");
+  say(`Excelente decisión. Le confirmo: ${S.tierElegido.nombre}, ${S.tramo||3} horas, por ${CLP(S.montoFinal)}.\n\n`
+    + `Para emitir su comprobante y su código de acceso, ¿me indica su nombre completo, por favor?`);
+}
+
+function pedirCorreo(){
+  S.fase = "correo";
+  say(`Muchas gracias, ${S.nombre.split(" ")[0]}. ¿A qué correo electrónico le envío el comprobante con el código de acceso?`);
+}
+
+function enviarPago(){
+  S.fase = "pago";
+  setChip("Pago","Se genera el enlace Webpay Plus. Aceptamos débito, crédito y CuentaRUT.");
+  say(`Perfecto. Le acabo de generar su enlace seguro de pago Webpay Plus de Transbank. Puede pagar con tarjeta de débito, crédito o CuentaRUT.\n\n`
+    + `Apenas se confirme el pago, le llega el comprobante con el código de acceso en menos de tres minutos. Y tiene cuarenta y cinco minutos de margen para su llegada.`,
+    { then: abrirPago });
+}
+
+function derivarHumano(motivo){
+  S.derivado = true;
+  S.fase = "derivado";
+  setChip("Derivación","Fuera de la base de conocimiento. El agente no improvisa: entrega la consulta a un ejecutivo.");
+  setState("Derivado a ejecutivo humano","#C9975C");
+  say(`Esa consulta prefiero que la vea directamente uno de nuestros ejecutivos, para darle una respuesta exacta y no una aproximación.\n\n`
+    + `Ya le dejé su caso asignado y un ejecutivo lo contactará. Mientras tanto, ¿puedo ayudarle con habitaciones, tarifas, servicios o ubicación?`,
+    { quick:["Ver habitaciones y tarifas","Servicios incluidos"] });
+  setTimeout(()=> sysNote("Conversación etiquetada y notificada al ejecutivo de turno · " + (motivo||"consulta fuera de alcance")), 1600);
+  setTimeout(()=> setState("En línea · lista para atender"), 5200);
+}
+
+/* ---- enrutador principal ---- */
+function router(raw){
+  const q = norm(raw);
+
+  /* atención ya cerrada: se abre un caso nuevo sin perder el saludo */
+  if(S.fase === "final"){
+    const sal = S.saludado;
+    resetState(); S.saludado = sal; S.fase = "apertura";
+    setChip("Apertura","Nueva consulta. La atención anterior quedó cerrada y registrada.");
+    if(/otra consulta|reiniciar|nueva|empezar|de nuevo|otra vez/i.test(raw)){
+      say("Con mucho gusto. ¿En qué más puedo ayudarle?",
+          { quick:["Ver habitaciones y tarifas","Servicios incluidos","Ubicación"] });
+      return;
+    }
+  }
+
+  /* el cliente pide hablar con una persona → se respeta de inmediato */
+  if(/\b(ejecutiv|una persona|con alguien|humano|operador|recepcionista real|hablar con un|gerente|encargad)\b/i.test(raw)
+     && S.fase!=="nombre" && S.fase!=="correo"){
+    derivarHumano("solicitud expresa del cliente"); return;
+  }
+
+  /* derivación obligatoria, en cualquier fase */
+  if(DERIVAR.test(raw)){ derivarHumano("tema de gestión humana"); return; }
+
+  /* suites sin tarifa publicada → demuestra la baranda anti-invención */
+  const st = detectSinTarifa(q);
+  if(st && S.fase!=="nombre" && S.fase!=="correo"){
+    S.derivado = true;
+    setChip("Sin dato en base","No hay tarifa cargada para esa suite. El agente no la inventa: deriva.");
+    say(`La ${st} sí existe y es una de nuestras suites, pero su tarifa no la tengo confirmada en este momento y prefiero no darle un valor equivocado.\n\n`
+      + `Se la consulto a un ejecutivo y le confirmamos. ¿Le muestro mientras tanto las categorías que sí tengo con tarifa vigente?`,
+      { quick:["Sí, muéstremelas","Prefiero esperar la confirmación"] });
+    setTimeout(()=> sysNote("Consulta de tarifa no publicada · derivada a ejecutivo"), 1500);
+    S.fase = "apertura";
+    return;
+  }
+
+  /* captura de datos en el cierre */
+  if(S.fase === "nombre"){
+    const limpio = raw.replace(/\b(me llamo|mi nombre es|soy|yo soy)\b/gi,"").trim();
+    if(limpio.length < 3){ say("¿Me repite su nombre completo, por favor?"); return; }
+    S.nombre = limpio.replace(/\s+/g," ");
+    pedirCorreo(); return;
+  }
+  if(S.fase === "correo"){
+    const m = raw.match(/[\w.+-]+@[\w-]+\.[\w.]{2,}/);
+    if(!m){ say("Creo que el correo quedó incompleto. ¿Me lo repite, por favor? Por ejemplo: nombre@correo.cl"); return; }
+    S.correo = m[0];
+    enviarPago(); return;
+  }
+
+  /* tramo horario */
+  const tr = detectTramo(q);
+
+  /* estamos esperando específicamente el tramo → cotizar */
+  if(S.fase === "tramo"){
+    if(tr){ S.tramo = tr; S.tierIdx = 0; S.sinRespuesta = 0; ofertar(); return; }
+    const tiT = detectTier(q);
+    if(tiT !== null){ S.tierIdx = tiT; S.tramo = 3; S.sinRespuesta = 0; ofertar(); return; }
+    say("Para cotizarle el valor exacto necesito saber el tramo. ¿Lo prefiere por tres horas o por doce horas?",
+        { quick:["3 horas","12 horas"] });
+    return;
+  }
+
+  /* tramo mencionado durante una oferta → recotizar de inmediato */
+  if(tr && (S.fase==="oferta"||S.fase==="descuento"||S.fase==="piso")){
+    S.tramo = tr; S.sinRespuesta = 0; ofertar(); return;
+  }
+  if(tr && (S.fase==="apertura"||S.fase==="consulta")){
+    S.tramo = tr; S.tierIdx = 0; S.sinRespuesta = 0; ofertar(); return;
+  }
+
+  /* elección directa de categoría */
+  const ti = detectTier(q);
+  if(ti !== null && (S.fase==="apertura"||S.fase==="consulta"||S.fase==="oferta"||S.fase==="descuento"||S.fase==="piso")){
+    S.tierIdx = ti; S.tramo = S.tramo || tr || 3;
+    ofertar(); return;
+  }
+
+  /* respuesta a una oferta */
+  if(S.fase === "oferta" || S.fase === "descuento" || S.fase === "piso"){
+    S.sinRespuesta = 0;
+    if(AFIRMA_F.test(raw)){ iniciarCierre(); return; }
+    if(OBJETA.test(raw)){
+      if(S.fase === "piso"){ derivarHumano("solicitud bajo la tarifa cerrada"); return; }
+      if(!S.descuentoAplicado) aplicarDescuento(); else bajarCategoria();
+      return;
+    }
+    if(AFIRMA.test(raw)){ iniciarCierre(); return; }
+    say("Para orientarlo mejor: ¿le acomoda la opción que le presenté, o prefiere que le muestre una alternativa de menor valor?",
+        { quick:["Me acomoda","Muéstreme una alternativa"] });
+    return;
+  }
+
+  /* consultas de conocimiento */
+  if(/servicio|wifi|wi fi|internet|tv|televi|climat|aire|frigobar|room service|estacion|parking|incluye|incluid/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información","Respuesta desde la base de conocimiento cerrada.");
+    say(KB.servicios + " " + KB.cortesias, { quick:["Ver tarifas","¿Dónde están ubicados?"] }); return;
+  }
+  if(/trago|espumante|desayuno|cortesia|cortesía|bienvenida|regalo/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información"); say(KB.cortesias, { quick:["Ver tarifas"] }); return;
+  }
+  if(/donde|dónde|ubicac|direccion|dirección|llegar|queda|providencia|passy|mapa/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información"); say(KB.ubicacion, { quick:["Ver tarifas","Servicios incluidos"] }); return;
+  }
+  if(/privac|discre|seguridad|anonim|nombre|registro|limpieza|higiene|sanitiz/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información"); say(KB.privacidad, { quick:["Ver tarifas"] }); return;
+  }
+  if(/pagar|pago|tarjeta|debito|débito|credito|crédito|cuentarut|transferencia|efectivo|webpay|transbank/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información"); say(KB.pago, { quick:["Ver tarifas"] }); return;
+  }
+  if(/horario|abierto|atienden|24|abren|cierran/.test(q)){
+    S.fase="consulta"; S.sinRespuesta=0; setChip("Información"); say("Atendemos las 24 horas, todos los días del año. " + KB.tramos, { quick:["Ver tarifas"] }); return;
+  }
+  if(/gracias|muchas gracias|te pasaste|excelente servicio/.test(q)){
+    say("Ha sido un gusto atenderle. Quedo a su disposición para lo que necesite."); return;
+  }
+  if(SALUDO.test(raw) && S.fase==="apertura"){
+    say("Hola, qué gusto saludarle. ¿En qué puedo ayudarle?", { quick:["¿Tienen habitaciones disponibles?","¿Cuáles son los precios?"] });
+    return;
+  }
+
+  /* consulta inicial de habitaciones o precios → arranca el Top-Down */
+  if(PRECIOS.test(raw)){
+    S.tramo = S.tramo || tr;
+    if(!S.tramo){
+      S.fase="tramo"; S.sinRespuesta=0;
+      setChip("Calificación","Antes de cotizar se define el tramo horario.");
+      say("Con mucho gusto. Tenemos disponibilidad ahora mismo. " + KB.tramos + "\n\n¿Para cuál de los dos le cotizo?",
+          { quick:["3 horas","12 horas"] });
+      return;
+    }
+    S.tierIdx = 0; ofertar(); return;
+  }
+
+  /* nada reconocido */
+  S.sinRespuesta++;
+  if(S.sinRespuesta >= 2){ derivarHumano("consulta no comprendida"); S.sinRespuesta=0; return; }
+  say("Disculpe, no logré entenderle bien. Puedo ayudarle con habitaciones y tarifas, servicios incluidos, ubicación o su reserva. ¿Cuál de esos temas necesita?",
+      { quick:["Habitaciones y tarifas","Servicios incluidos","Ubicación"] });
+}
+
+/* ============================================================
+   6. ENTRADA DEL USUARIO
+   ============================================================ */
+
+function submit(text){
+  const t = (text || "").trim();
+  if(!t || busy) return;
+  tLastUser = Date.now();
+  bubble(esc(t), "me");
+  quickBox.innerHTML = "";
+  field.value = "";
+  setTimeout(()=> router(t), 90);
+}
+
+$("send").addEventListener("click", ()=>{ unlockVoice(); submit(field.value); });
+field.addEventListener("keydown", e=>{ if(e.key === "Enter"){ e.preventDefault(); unlockVoice(); submit(field.value); }});
+
+/* ---- reconocimiento de voz (donde exista) ---- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const GUM = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+/* ------------------------------------------------------------
+   PERMISO DE MICRÓFONO — UNA SOLA VEZ
+   El navegador guarda la autorización por ORIGEN (el dominio),
+   no por sesión. Al pedirla explícitamente con getUserMedia y
+   liberar el stream de inmediato, el reconocimiento de voz
+   posterior ya no vuelve a preguntar.
+   ------------------------------------------------------------ */
+
+function micEstado(listo){
+  micReady = !!listo;
+  if(micReady){
+    mic.disabled = false;
+    mic.classList.remove("off");
+    mic.title = "Hablar";
+    hint.textContent = "Pulse el micrófono para hablar, o escriba su consulta.";
+  }else{
+    mic.classList.add("off");
+    mic.title = "Active el micrófono para hablar";
+    hint.textContent = "Puede escribir, o activar el micrófono para hablar.";
+  }
+}
+
+/* ¿el navegador ya tiene el permiso guardado de una visita anterior? */
+async function permisoGuardado(){
+  if(!navigator.permissions || !navigator.permissions.query) return "unknown";
+  try{
+    const st = await navigator.permissions.query({ name:"microphone" });
+    if(st.state === "granted") micEstado(true);
+    st.onchange = ()=>{ if(st.state === "granted") micEstado(true); };
+    return st.state;             /* granted · denied · prompt */
+  }catch(e){ return "unknown"; }
+}
+
+/* tarjeta de invitación dentro del propio diálogo */
+function tarjetaMicrofono(){
+  const card = document.createElement("div");
+  card.className = "msg perm";
+  card.innerHTML =
+    '<div class="perm-t">' +
+      '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">' +
+        '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg>' +
+      '<p>Si prefiere, podemos conversar de viva voz, como si estuviera frente al mesón. ' +
+      'Para eso su navegador me pedirá permiso <strong>una sola vez</strong>, y no volverá a molestarle.</p>' +
+    '</div>' +
+    '<button class="perm-go" id="permGo">Activar micrófono</button>' +
+    '<small>No se graba ni se almacena nada. También puede seguir escribiendo.</small>';
+  stream.appendChild(card);
+  irAlFinal();
+
+  card.querySelector("#permGo").addEventListener("click", function(){
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span>Esperando su autorización…';
+    pedirMicrofono().then(ok=>{
+      if(ok){
+        card.remove();
+        say("Perfecto, ya lo escucho. Pulse el micrófono cuando quiera hablarme y cuénteme en qué puedo ayudarle.");
+      }else{
+        btn.disabled = false;
+        btn.textContent = motivoEntorno() ? "Intentar de nuevo" : "Reintentar";
+      }
+    });
+  });
+}
+
+/* ------------------------------------------------------------
+   DIAGNÓSTICO DE ENTORNO
+   El micrófono puede fallar por tres motivos que NO son del código:
+   1) La página corre dentro de un iframe sin permiso delegado.
+   2) Se abrió con file:// (doble clic), que no tiene origen persistible.
+   3) El usuario bloqueó el permiso y el navegador ya no vuelve a preguntar.
+   ------------------------------------------------------------ */
+const enIframe = (()=>{ try{ return window.self !== window.top; }catch(e){ return true; } })();
+const esFile   = location.protocol === "file:";
+const esSeguro = window.isSecureContext === true;
+let avisoBloqueo = false;   /* para no repetir la misma nota de sistema */
+
+function motivoEntorno(){
+  if(enIframe) return "iframe";
+  if(esFile)   return "file";
+  if(!esSeguro) return "inseguro";
+  return null;
+}
+
+/* tarjeta explicativa: aparece una sola vez y dice qué hacer */
+function tarjetaBloqueo(motivo){
+  if(avisoBloqueo) return;
+  avisoBloqueo = true;
+
+  /* la invitación original ya no aplica: se retira antes de explicar */
+  stream.querySelectorAll(".msg.perm").forEach(el => el.remove());
+
+  const textos = {
+    iframe: "El micrófono está bloqueado porque esta página se está mostrando dentro de otra ventana " +
+            "(un panel de vista previa). Ábrala en una pestaña propia del navegador y funcionará.",
+    file:   "La página se abrió como archivo local, y en ese modo el navegador no puede guardar el permiso " +
+            "del micrófono. Publíquela o ábrala desde una dirección web y quedará autorizada de forma permanente.",
+    inseguro:"El micrófono solo se habilita en conexiones seguras (https). Al publicar el sitio quedará disponible.",
+    denegado:"El navegador tiene el micrófono bloqueado para este sitio, por eso ya no vuelve a preguntar. " +
+             "Pulse el ícono a la izquierda de la dirección, active Micrófono y recargue la página."
+  };
+
+  const card = document.createElement("div");
+  card.className = "msg perm";
+  card.innerHTML =
+    '<div class="perm-t">' +
+      '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">' +
+        '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>' +
+      '<p>' + (textos[motivo] || textos.denegado) + '</p>' +
+    '</div>' +
+    '<small>Mientras tanto puede escribirme con normalidad: le respondo igual, y hablando.</small>';
+  stream.appendChild(card);
+  irAlFinal();
+}
+
+async function pedirMicrofono(){
+  unlockVoice();
+
+  if(!GUM){
+    hint.textContent = "Su navegador no permite el uso del micrófono. Escriba su consulta.";
+    tarjetaBloqueo(motivoEntorno() || "denegado");
+    return false;
+  }
+
+  /* si el entorno lo impide, lo decimos antes de gatillar un rechazo seco */
+  const mot = motivoEntorno();
+  if(mot){
+    hint.textContent = "Puede escribirme: en este modo el micrófono no está disponible.";
+    tarjetaBloqueo(mot);
+    /* aun así lo intentamos: en algunos navegadores sí funciona */
+  }
+
+  try{
+    const stream_ = await navigator.mediaDevices.getUserMedia({ audio: true });
+    /* liberamos el micrófono de inmediato: el permiso queda, el indicador
+       de grabación del navegador se apaga y nada queda escuchando */
+    stream_.getTracks().forEach(t => t.stop());
+    avisoBloqueo = false;
+    micEstado(true);
+    const c = stream.querySelector(".perm");
+    if(c) c.remove();
+    return true;
+  }catch(err){
+    const nombre = err && err.name ? err.name : "";
+    if(nombre === "NotAllowedError" || nombre === "SecurityError" || nombre === "NotSupportedError"){
+      /* ¿bloqueo permanente del navegador, o solo un rechazo puntual? */
+      let estado = "prompt";
+      try{
+        if(navigator.permissions && navigator.permissions.query){
+          estado = (await navigator.permissions.query({ name:"microphone" })).state;
+        }
+      }catch(e){}
+      hint.textContent = "No se autorizó el micrófono. Puede escribirme igual: le respondo hablando.";
+      tarjetaBloqueo(mot || (estado === "denied" ? "denegado" : "denegado"));
+    }else if(nombre === "NotFoundError" || nombre === "DevicesNotFoundError"){
+      hint.textContent = "No se encontró un micrófono conectado. Escriba su consulta.";
+    }else if(nombre === "NotReadableError"){
+      hint.textContent = "Otra aplicación está usando el micrófono. Ciérrela e inténtelo de nuevo.";
+    }else{
+      hint.textContent = "No se pudo abrir el micrófono. Escriba su consulta.";
+    }
+    micEstado(false);
+    return false;
+  }
+}
+
+/* estado inicial */
+if(!SR || !GUM){
+  mic.disabled = true;
+  mic.classList.add("off");
+  mic.title = "Su navegador no permite dictado por voz";
+  hint.textContent = "Su navegador no permite dictado por voz. Escriba su consulta: Ema igual le responderá hablando.";
+}else{
+  micEstado(false);
+}
+
+/* ---- dictado ---- */
+mic.addEventListener("click", ()=>{
+  unlockVoice();
+  if(!SR || !GUM) return;
+
+  /* primer uso: se pide el permiso, no se intenta escuchar todavía */
+  if(!micReady){
+    pedirMicrofono().then(ok=>{
+      const c = stream.querySelector(".perm");
+      if(ok && c) c.remove();
+      if(ok) hint.textContent = "Listo. Pulse el micrófono y hable.";
+    });
+    return;
+  }
+
+  if(listening){ try{ recog.stop(); }catch(e){} return; }
+  try{
+    recog = new SR();
+    recog.lang = "es-CL"; recog.interimResults = false;
+    recog.continuous = false; recog.maxAlternatives = 1;
+    recog.onstart = ()=>{
+      listening = true; mic.classList.add("live");
+      setState("Escuchando…","#C9975C");
+      hint.textContent = "Hable ahora. Al terminar, se envía sola.";
+      if(window.speechSynthesis) speechSynthesis.cancel();
+    };
+    recog.onresult = e => submit(e.results[0][0].transcript);
+    recog.onerror = e => {
+      listening = false; mic.classList.remove("live"); setState("En línea · lista para atender");
+      if(e.error === "not-allowed"){
+        micEstado(false);
+        hint.textContent = "El navegador revocó el permiso. Pulse el micrófono para autorizarlo otra vez.";
+      }else{
+        hint.textContent = "No se escuchó nada. Inténtelo de nuevo o escriba su consulta.";
+      }
+    };
+    recog.onend = ()=>{
+      listening = false; mic.classList.remove("live"); setState("En línea · lista para atender");
+      if(hint.textContent.indexOf("Hable ahora") === 0)
+        hint.textContent = "Pulse el micrófono para hablar, o escriba su consulta.";
+    };
+    recog.start();
+  }catch(e){
+    hint.textContent = "No se pudo iniciar el micrófono. Escriba su consulta.";
+  }
+});
+
+/* ---- controles de cabecera ---- */
+$("btnVoice").addEventListener("click", function(){
+  voiceOn = !voiceOn;
+  this.setAttribute("aria-pressed", String(voiceOn));
+  if(!voiceOn && window.speechSynthesis) speechSynthesis.cancel();
+  hint.textContent = voiceOn ? "Voz activada." : "Voz silenciada. Las respuestas siguen apareciendo en pantalla.";
+});
+$("btnReset").addEventListener("click", ()=>{
+  if(window.speechSynthesis) speechSynthesis.cancel();
+  resetState(); stream.innerHTML=""; quickBox.innerHTML="";
+  $("fillFast").style.width="0"; $("fillSlow").style.width="0";
+  $("valFast").textContent="—"; $("valSlow").textContent="—";
+  setChip("Apertura","La estrategia comercial se muestra en pantalla solo en esta demostración.");
+  setState("En línea · lista para atender");
+  saludar();
+});
+
+/* ============================================================
+   7. WEBPAY SIMULADO
+   ============================================================ */
+
+const veil = $("veil"), veilInner = $("veilInner");
+
+let cdTimer = null;
+
+/* ---------- Pantalla 1 · formulario Webpay ---------- */
+function abrirPago(){
+  const t = S.tierElegido, monto = S.montoFinal, tramo = S.tramo || 3;
+  S.orden = "HA-" + Date.now().toString().slice(-8);
+  veilInner.innerHTML = `
+    <div class="pay">
+      <div class="pay-demo">Entorno de demostración · no se realiza ningún cobro</div>
+      <div class="pay-top">
+        <div class="pay-logo">Webpay Plus<small>Transbank</small></div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </div>
+      <div class="pay-body">
+        <div class="pay-sum">
+          <div class="pay-line"><span>Comercio</span><span>Hotel Amor y Pasión SpA</span></div>
+          <div class="pay-line"><span>Detalle</span><span>${esc(t.nombre)} · ${tramo} h</span></div>
+          <div class="pay-line"><span>Orden de compra</span><span>${S.orden}</span></div>
+          <div class="pay-line tot"><span>Total a pagar</span><span>${CLP(monto)}</span></div>
+        </div>
+        <label for="pmed">Medio de pago</label>
+        <select id="pmed">
+          <option>Tarjeta de crédito</option>
+          <option>Tarjeta de débito</option>
+          <option>CuentaRUT</option>
+        </select>
+        <label for="pnum">Número de tarjeta</label>
+        <input id="pnum" inputmode="numeric" value="4051 8856 0000 0000" autocomplete="off">
+        <div class="pay-2">
+          <div><label for="pexp">Vencimiento</label><input id="pexp" value="12/29" autocomplete="off"></div>
+          <div><label for="pcvv">CVV</label><input id="pcvv" value="123" autocomplete="off"></div>
+        </div>
+        <p class="pay-note" style="text-align:left;margin-top:16px">Pantalla simulada con fines
+        demostrativos. En producción, este paso corresponde a una transacción real generada por
+        Transbank, con certificación del comercio.</p>
+      </div>
+      <div class="mfoot">
+        <button class="pay-btn pulse dark" id="payGo" style="margin-top:0">Pagar ${CLP(monto)}</button>
+        <button class="pay-cancel" id="payNo">Cancelar y volver</button>
+      </div>
+    </div>`;
+  veil.classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  $("payNo").addEventListener("click", cerrarPago);
+  $("payGo").addEventListener("click", function(){
+    S.medio = $("pmed").value;
+    this.classList.remove("pulse","dark");
+    this.innerHTML = '<span class="spin"></span>Autorizando con el emisor…';
+    this.disabled = true;
+    setTimeout(pantallaAprobado, 1600);
+  });
+}
+
+/* ---------- Pantalla 2 · pago aprobado ---------- */
+function pantallaAprobado(){
+  const t = S.tierElegido, tramo = S.tramo || 3;
+  S.autoriz = String(Math.floor(100000 + Math.random()*899999));
+  const f = new Date().toLocaleString("es-CL",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  veilInner.innerHTML = `
+    <div class="appr">
+      <div class="pay-demo">Entorno de demostración · no se realizó ningún cobro</div>
+      <div class="appr-hero">
+        <div class="appr-tick">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 7"/></svg>
+        </div>
+        <h3>Pago realizado</h3>
+        <p>Transacción aprobada por el emisor</p>
+        <div class="appr-amt">${CLP(S.montoFinal)}</div>
+      </div>
+      <div class="appr-b">
+        <div class="appr-row"><span>Comercio</span><b>Hotel Amor y Pasión SpA</b></div>
+        <div class="appr-row"><span>Orden de compra</span><b class="m">${S.orden}</b></div>
+        <div class="appr-row"><span>Código de autorización</span><b class="m">${S.autoriz}</b></div>
+        <div class="appr-row"><span>Medio de pago</span><b>${esc(S.medio||"Tarjeta de crédito")} ····0000</b></div>
+        <div class="appr-row"><span>Detalle</span><b>${esc(t.nombre)} · ${tramo} h</b></div>
+        <div class="appr-row"><span>Fecha</span><b class="m">${f}</b></div>
+      </div>
+      <div class="mfoot">
+        <button class="appr-go pulse dark" id="apprGo" style="margin-top:0">Continuar</button>
+        <div class="guide">
+          <svg class="arrow dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M6 13l6 6 6-6"/></svg>
+          <small>Estamos enviando su comprobante y su código de acceso al correo.</small>
+        </div>
+      </div>
+    </div>`;
+
+  say("Su pago fue aprobado. Le estoy enviando ahora mismo el comprobante con su código de acceso al correo.");
+
+  $("apprGo").addEventListener("click", function(){
+    this.classList.remove("pulse","dark");
+    this.innerHTML = '<span class="spin"></span>Enviando comprobante…';
+    this.disabled = true;
+    setTimeout(pantallaCorreo, 1500);
+  });
+}
+
+/* ---------- Pantalla 3 · correo de confirmación ---------- */
+function pantallaCorreo(){
+  const t = S.tierElegido, tramo = S.tramo || 3;
+  S.codigo = "AMR-" + Math.random().toString(36).slice(2,6).toUpperCase() + "-" + Math.floor(100+Math.random()*899);
+  const nom = S.nombre.split(" ")[0];
+
+  veilInner.innerHTML = `
+    <div class="mail">
+      <div class="mail-app"><span class="live"></span>Correo recibido · ahora</div>
+      <div class="mail-hd">
+        <div class="mail-av">HA</div>
+        <div>
+          <div class="mail-from">Hotel Amor y Pasión · Reservas</div>
+          <div class="mail-meta">reservas@hotelamorypasion.cl</div>
+          <div class="mail-meta">Para: ${esc(S.correo)}</div>
+        </div>
+      </div>
+      <div class="mail-subj">Confirmación de reserva · Código ${S.codigo}</div>
+      <div class="mail-b">
+        <p>Estimado/a ${esc(nom)}, su reserva quedó confirmada y su pago fue recibido correctamente.
+        Presente el siguiente código a su llegada:</p>
+
+        <div class="mail-code">
+          <div class="k">Código de acceso</div>
+          <div class="v">${S.codigo}</div>
+        </div>
+
+        <div class="mail-rows">
+          <div class="mail-row"><span>Titular</span><b>${esc(S.nombre)}</b></div>
+          <div class="mail-row"><span>Habitación</span><b>${esc(t.nombre)}</b></div>
+          <div class="mail-row"><span>Tramo contratado</span><b>${tramo} horas</b></div>
+          <div class="mail-row"><span>Total pagado</span><b>${CLP(S.montoFinal)}</b></div>
+          <div class="mail-row"><span>Autorización</span><b>${S.autoriz}</b></div>
+          <div class="mail-row"><span>Dirección</span><b>Apoquindo 3600, Las Condes</b></div>
+        </div>
+
+        <div class="mail-clock">
+          <div class="k">Margen para su llegada</div>
+          <div class="v" id="cd">45:00</div>
+        </div>
+
+        <p class="mail-foot">Correo simulado con fines demostrativos. En producción se envía
+        automáticamente al confirmarse el pago, en menos de tres minutos.</p>
+      </div>
+      <div class="mfoot">
+        <button class="mail-go pulse blue" id="mailGo">Recibido, gracias</button>
+        <div class="guide">
+          <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M6 13l6 6 6-6"/></svg>
+          <small>Confirme la recepción para cerrar la atención.</small>
+        </div>
+      </div>
+    </div>`;
+
+  say("Listo, " + nom + ". Su comprobante ya llegó a su correo, con el código de acceso destacado. Si me confirma que lo recibió, cerramos su atención.");
+
+  /* cuenta regresiva real de 45 minutos */
+  let left = 45*60;
+  const cd = $("cd");
+  clearInterval(cdTimer);
+  cdTimer = setInterval(()=>{
+    left--;
+    if(left < 0 || !cd || !document.body.contains(cd)){ clearInterval(cdTimer); return; }
+    cd.textContent = String(Math.floor(left/60)).padStart(2,"0") + ":" + String(left%60).padStart(2,"0");
+  }, 1000);
+
+  $("mailGo").addEventListener("click", ()=>{
+    clearInterval(cdTimer);
+    cerrarPago();
+    despedida();
+  });
+}
+
+/* ---------- Cierre y despedida ---------- */
+function despedida(){
+  setChip("Atención cerrada","Pago aprobado, comprobante emitido, código entregado y recepción confirmada.");
+  S.fase = "final";
+  const nom = S.nombre.split(" ")[0];
+  say("Muchas gracias, " + nom + ". Su reserva de la " + S.tierElegido.nombre + " quedó confirmada y su código es " +
+      S.codigo.replace(/-/g," ") + ".\n\n" +
+      "Lo esperamos en Apoquindo 3600, Las Condes, dentro de los próximos cuarenta y cinco minutos. " +
+      "Cualquier cosa que necesite durante su estadía, la pide con su código. Que lo disfrute mucho.",
+      { quick:["Iniciar otra consulta"] });
+  setTimeout(()=> sysNote("Reserva " + S.codigo + " emitida · oportunidad cerrada como ganada"), 1900);
+}
+
+function cerrarPago(){
+  clearInterval(cdTimer);
+  veil.classList.remove("open");
+  veilInner.innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+veil.addEventListener("click", e => { if(e.target === veil) cerrarPago(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && veil.classList.contains("open")) cerrarPago(); });
+
+/* ============================================================
+   8. CATÁLOGO DE HABITACIONES
+   ============================================================ */
+
+function renderRooms(){
+  const box = $("rooms");
+  let html = "";
+
+  TIERS.forEach((t, i) => {
+    const t3 = t.tarifas[3], t12 = t.tarifas[12];
+    const numImagen = i + 1;
+    html += `<article class="room">
+      <div class="room-art">
+        <img src="./habitacion-${numImagen}.jpg" alt="${esc(t.nombre)}" style="width:100%; height:100%; object-fit:cover;">
+        <span class="room-tag">${esc(t.tag)}</span>
+      </div>
+      <div class="room-b">
+        <h3>${esc(t.nombre)}</h3>
+        <p>${esc(t.desc)}</p>
+        <div class="rates">
+          <div class="rate${t3.cerrada?" closed":""}"><span>3 horas</span><b>${CLP(t3.base)}</b></div>
+          <div class="rate"><span>12 horas</span><b>${CLP(t12.base)}</b></div>
+        </div>
+        <button class="room-cta" data-tier="${i}">Consultar esta suite</button>
+      </div>
+    </article>`;
+  });
+
+  SIN_TARIFA.forEach((r, i) => {
+    const numImagen = i + 4;
+    html += `<article class="room">
+      <div class="room-art">
+        <img src="./habitacion-${numImagen}.jpg" alt="${esc(r.nombre)}" style="width:100%; height:100%; object-fit:cover;">
+        <span class="room-tag">Tarifa por consulta</span>
+      </div>
+      <div class="room-b">
+        <h3>${esc(r.nombre)}</h3>
+        <p>${esc(r.desc)}</p>
+        <div class="ask">Sin tarifa publicada. La recepción virtual no la inventa: la deriva a un ejecutivo.</div>
+        <button class="room-cta" data-ask="${esc(r.nombre)}">Preguntar por esta suite</button>
+      </div>
+    </article>`;
+  });
+
+  box.innerHTML = html;
+
+  box.querySelectorAll("[data-tier]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      unlockVoice(); focusAgent();
+      setTimeout(()=> submit("Me interesa la " + TIERS[+b.dataset.tier].nombre), 480);
+    });
+  });
+  box.querySelectorAll("[data-ask]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      unlockVoice(); focusAgent();
+      setTimeout(()=> submit("¿Cuánto cuesta la " + b.dataset.ask + "?"), 480);
+    });
+  });
+}
+
+/* ============================================================
+   9. NAVEGACIÓN Y ARRANQUE
+   ============================================================ */
+
+const burger = $("burger"), drawer = $("drawer");
+burger.addEventListener("click", ()=>{
+  const open = drawer.classList.toggle("open");
+  burger.setAttribute("aria-expanded", String(open));
+});
+drawer.querySelectorAll("a").forEach(a=>{
+  a.addEventListener("click", ()=>{ drawer.classList.remove("open"); burger.setAttribute("aria-expanded","false"); });
+});
+
+function focusAgent(){
+  document.getElementById("agent").scrollIntoView({ behavior:"smooth", block:"center" });
+}
+document.querySelectorAll("[data-open-agent]").forEach(b=>{
+  b.addEventListener("click", ()=>{ unlockVoice(); focusAgent(); setTimeout(()=> field.focus({preventScroll:true}), 700); });
+});
+
+async function saludar(){
+  if(S.saludado) return;
+  S.saludado = true;
+
+  /* ¿ya nos autorizó el micrófono en una visita anterior? */
+  const estado = (SR && GUM) ? await permisoGuardado() : "no";
+  const bloqueado = (SR && GUM && estado === "denied");
+  const ofrecerVoz = (SR && GUM && estado !== "granted" && estado !== "denied");
+
+  setTimeout(()=>{
+    const h = new Date().getHours();
+    const saludo = h < 12 ? "Buenos días" : (h < 20 ? "Buenas tardes" : "Buenas noches");
+
+    const texto = ofrecerVoz
+      ? saludo + ", bienvenido a Hotel Amor y Pasión. Soy Ema, su ejecutiva de reservas.\n\n"
+        + "Puede escribirme, o si lo prefiere, hablarme y lo atiendo de viva voz. "
+        + "¿En qué puedo ayudarle?"
+      : saludo + ", bienvenido a Hotel Amor y Pasión. Soy Ema, su ejecutiva de reservas. ¿En qué puedo ayudarle?";
+
+    say(texto, {
+      quick:["¿Tienen habitaciones disponibles?","¿Cuáles son los precios?","¿Qué servicios incluyen?"],
+      then: ofrecerVoz ? tarjetaMicrofono
+           : (bloqueado ? ()=> tarjetaBloqueo(motivoEntorno() || "denegado") : null)
+    });
+  }, 500);
+}
+
+renderRooms();
+saludar();
+
+/* La barra de referencia se muestra llena desde el inicio: el contraste
+   debe leerse antes de que el visitante escriba nada. */
+setTimeout(()=>{ $("fillSlow").style.width = "100%"; }, 420);
+
+/* La voz se desbloquea con el primer gesto real del usuario (requisito de iOS) */
+["pointerdown","keydown"].forEach(ev =>
+  document.addEventListener(ev, unlockVoice, { once:true, passive:true })
+);
+</script>
+</body>
+</html>
